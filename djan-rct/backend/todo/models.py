@@ -19,8 +19,6 @@ class GameSession(models.Model):
     autoClickerCount = models.IntegerField(default = 0)
     farmCount = models.IntegerField(default = 0)
 
-    currentState = models.CharField(max_length = 100)
-    currentStateDate = models.DateTimeField()
 
     def is_active(self):
-        return self.end_time is None
+        return self.endTime is None
