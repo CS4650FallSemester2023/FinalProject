@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from .models import Todo
-
-class TodoSerializer(serializers.ModelSerializer):
+from .models import GameSession
+from .models import ToDo
+class ToDoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Todo
-        fields = ('id', 'title', 'description', 'completed')
+        model = ToDo
+        fields = ('title', 'description', 'completed')
+
+class GameSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameSession
+        fields = ('user', 'game','startTime','endTime', 'cookieCount', 'autoClickerCount', 'farmCount')
