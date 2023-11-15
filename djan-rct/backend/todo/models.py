@@ -17,7 +17,6 @@ class GameSession(models.Model):
     endTime = models.DateTimeField()
     cookieCount = models.IntegerField(default = 0)
     autoClickerCount = models.IntegerField(default = 0)
-    farmCount = models.IntegerField(default = 0)
 
 
     def is_active(self):
