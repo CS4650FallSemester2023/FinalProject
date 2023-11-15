@@ -9,4 +9,4 @@ class ToDoSerializer(serializers.ModelSerializer):
 class GameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSession
-        fields = ('user', 'game','startTime','endTime', 'cookieCount', 'autoClickerCount', 'farmCount')
+        fields = ('user', 'game','startTime','endTime', 'cookieCount', 'autoClickerCount')
