@@ -23,7 +23,6 @@ body {
 .cookieGame{
   display: flex;
   justify-content: space-between;
-  padding-top: 30px;
 }
 
 .cookiePlay{

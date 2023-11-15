@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Particle from './Particle'
 import Shop from './Shop'
 import cookie from "../images/cookie.png"
@@ -7,17 +7,18 @@ import x2click from "../images/x2-click.png"
 
 
 export default function Main() {
-    // state variable to keep track 
-    const[cookieCount, updateCookieCount] = useState(0);
+    // useState hook that uses a state variable to preserve values
+    const [cookieCount, updateCookieCount] = useState(0);
     const [particles, setParticles] = useState([]);
     const [autoclickCount, updateAutoClickCount] = useState(0);
     const [x2clickCount, updatex2clickCount] = useState(0);
 
-    const[autoclickPrice, updateAutoClickPrice] = useState(20);
-    const[x2clickPrice, updatex2clickPrice] = useState(40);
+    const [autoclickPrice, updateAutoClickPrice] = useState(20);
+    const [x2clickPrice, updatex2clickPrice] = useState(40);
+    const autoclickInterval = useRef(null);
 
     
-    // load cookie count from local storage on component mount
+    // useEffect hook to retrieve the counts from local storage after component mounts/page load
     useEffect(() =>{
         const storeCookieCount = localStorage.getItem('cookieCount');
         const storeAutoClickCount = localStorage.getItem('autoclickCount');
@@ -25,7 +26,7 @@ export default function Main() {
         const storeAutoClickPrice = localStorage.getItem('autoclickPrice');
         const storex2ClickPrice = localStorage.getItem('x2clickPrice');
 
-        // check if stored value for variable in local storage
+        // check if stored value for state variable in local storage and update state with data
         if(storeCookieCount){
             updateCookieCount(parseInt(storeCookieCount));
         }
@@ -38,7 +39,6 @@ export default function Main() {
             updatex2clickCount(parseInt(storex2ClickCount));
         }
 
-
         if(storeAutoClickPrice){
             updateAutoClickPrice(parseInt(storeAutoClickPrice));
         }
@@ -46,9 +46,20 @@ export default function Main() {
         if(storex2ClickPrice){
             updatex2clickPrice(parseInt(storex2ClickPrice));
         }
-    }, []);
+
+        for(let i = 0; i < autoclickCount; i++){
+            autoClickCookie();
+        }
+
+        return () => {
+            clearInterval(autoclickInterval.current)
+        };
+    }, [autoclickCount]);
+    //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
 
 
+
+    // function to handle increasing count of cookie when clicked
     function handleCookieCount(e) {
         // update the state and use updated value in local storage
         const hasx2clickCount = localStorage.getItem('x2clickCount') !== null;
@@ -60,7 +71,9 @@ export default function Main() {
         else {
             newCookieCount = cookieCount + 1;
         }
+        // update state and trigger a re-render
         updateCookieCount(newCookieCount);
+        //update the value in local storage
         localStorage.setItem('cookieCount', newCookieCount);
 
         // Create a new particle and add it to the particles state
@@ -68,9 +81,10 @@ export default function Main() {
         setParticles((prevParticles) => [...prevParticles, newParticle]);
     };
 
+    // function to automatically click the click every 1 second
     function autoClickCookie() {
-        setInterval(() => {
-          updateCookieCount((prevCount) => {
+        autoclickInterval.current = setInterval(() => {
+            updateCookieCount((prevCount) => {
             const newCount = prevCount + 1;
             localStorage.setItem('cookieCount', newCount);
             return newCount;
@@ -78,19 +92,20 @@ export default function Main() {
         }, 1000);
     }
       
-
+    //function to handle purchasing upgrades
     function handleUpgradePurchase(upgradeName, upgradeCost) {
-        // Check if the user has enough cookies to purchase the upgrade
+        // check if the user has enough cookies to purchase the upgrade
         if (cookieCount >= upgradeCost) {
-          // Deduct the upgrade cost from the cookie count
+          // deduct the upgrade cost from the cookie count
           const newCookieCount = cookieCount - upgradeCost; 
           updateCookieCount(newCookieCount);
           localStorage.setItem('cookieCount', newCookieCount);
 
+          // update 'autoclick' and 'x2clickPrice' price to upgrade and num. of times bought
           if(upgradeName === 'autoclick'){
             updateAutoClickCount((prevCount) => prevCount + 1);
             localStorage.setItem('autoclickCount', autoclickCount + 1);	
-            autoClickCookie();	
+            // autoClickCookie();	
 
             updateAutoClickPrice((prevPrice) => Math.round(prevPrice * 1.2));
             localStorage.setItem('autoclickPrice', Math.round(autoclickPrice * 1.2));	
@@ -118,7 +133,7 @@ export default function Main() {
                     src={cookie} 
                     className = 'cookieBtn' 
                     alt="cookie img" 
-                    onClick={handleCookieCount}>
+                    onClick={handleCookieCount}> 
                 </img>
             </section>
             {/* Player Side Bar */}
