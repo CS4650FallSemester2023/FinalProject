@@ -6,7 +6,7 @@ from .models import Todo, GameSession
 # Create your views here.
 # For listing all sessions and creating new ones
 class TodoView(viewsets.ModelViewSet):
-    serializer_class = TodoSerializer
+    serializer_class = ToDoSerializer
     queryset = Todo.objects.all()
 
 class GameSessionView(viewsets.ModelViewSet):
