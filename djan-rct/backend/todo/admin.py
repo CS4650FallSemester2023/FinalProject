@@ -9,5 +9,5 @@ class GameSessionAdmin(admin.ModelAdmin):
 
 # Register your models here.
 
-admin.site.register(Todo, TodoAdmin)
+admin.site.register(ToDo, TodoAdmin)
 admin.site.register(GameSession, GameSessionAdmin)
