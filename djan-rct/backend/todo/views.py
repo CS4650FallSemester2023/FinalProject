@@ -7,4 +7,4 @@ from .models import ToDo
 # For listing all sessions and creating new ones
 class TodoView(viewsets.ModelViewSet):
     serializer_class = ToDoSerializer
-    queryset = Todo.objects.all()
+    queryset = ToDo.objects.all()
