@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .serializers import TodoSerializer, GameSessionSerializer
+from .serializers import ToDoSerializer, GameSessionSerializer
 from .models import Todo, GameSession
 
 # Create your views here.
