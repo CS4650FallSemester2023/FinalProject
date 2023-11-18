@@ -4,6 +4,7 @@ import Shop from './Shop'
 import cookie from "../images/cookie.png"
 import autoclick from "../images/auto-click.png"
 import x2click from "../images/x2-click.png"
+import axios from 'axios'
 
 
 export default function Main() {
