@@ -4,4 +4,4 @@ from .models import GameSession
 class GameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSession
-        fields = ('user', 'game', 'startTime', 'endTime', 'cookieCount', 'autoClickerCount')
+        fields = ('user', 'startTime', 'endTime', 'cookieCount', 'autoClickerCount')

@@ -24,7 +24,6 @@ class Migration(migrations.Migration):
                 ('cookieCount', models.IntegerField(default=0)),
                 ('autoClickerCount', models.IntegerField(default=0)),
                 ('farmCount', models.IntegerField(default=0)),
-                ('game', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='todo.todo')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
