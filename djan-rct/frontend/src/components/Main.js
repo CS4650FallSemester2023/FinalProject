@@ -17,6 +17,7 @@ export default function Main() {
     const [autoclickPrice, updateAutoClickPrice] = useState(20);
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
+    const dataTransferInterval = useRef(null);
 
     
     // useEffect hook to retrieve the counts from local storage after component mounts/page load
@@ -57,8 +58,6 @@ export default function Main() {
         };
     }, [autoclickCount]);
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
-
-
 
     // function to handle increasing count of cookie when clicked
     function handleCookieCount(e) {
@@ -122,6 +121,13 @@ export default function Main() {
         else {
           alert('Not enough cookies to purchase this upgrade!');
         }
+    }
+
+    // function to automatically send current player data to backend
+    function sendData(){
+        dataTransferInterval.current = setInterval(() => {
+            console.log("test interval");
+        }, 1500)
     }
 
     return (
