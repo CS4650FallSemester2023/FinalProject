@@ -3,6 +3,6 @@ from .models import GameSession
 # Register your models here.
 
 class GameSessionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'startTime', 'cookieCount', 'autoClickerCount', 'doubleClickCount')
+    list_display = ('user', 'startTime', 'cookieCount', 'autoClickCount', 'doubleClickCount', 'autoClickPrice', 'doubleClickPrice')
 
 admin.site.register(GameSession, GameSessionAdmin)
