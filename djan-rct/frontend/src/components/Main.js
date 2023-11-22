@@ -12,7 +12,7 @@ export default function Main() {
     const [particles, setParticles] = useState([]);
     const [autoclickCount, updateAutoClickCount] = useState(0);
     const [x2clickCount, updatex2clickCount] = useState(0);
-
+    const [startTime, updateStartTime] = useState("")
     const [autoclickPrice, updateAutoClickPrice] = useState(20);
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
@@ -20,35 +20,7 @@ export default function Main() {
     // useEffect hook to retrieve the counts from local storage after component mounts/page load
     useEffect(() =>{
         const userid = localStorage.getItem("userid");
-        const storeCookieCount = localStorage.getItem('cookieCount');
-        const storeAutoClickCount = localStorage.getItem('autoclickCount');
-        const storex2ClickCount = localStorage.getItem('x2clickCount');
-        const storeAutoClickPrice = localStorage.getItem('autoclickPrice');
-        const storex2ClickPrice = localStorage.getItem('x2clickPrice');
-
-        // check if stored value for state variable in local storage and update state with data
-        if(userid){
-            loadData();
-        }
-        if(storeCookieCount){
-            updateCookieCount(parseInt(storeCookieCount));
-        }
-
-        if(storeAutoClickCount){
-            updateAutoClickCount(parseInt(storeAutoClickCount));
-        }
-
-        if(storex2ClickCount){
-            updatex2clickCount(parseInt(storex2ClickCount));
-        }
-
-        if(storeAutoClickPrice){
-            updateAutoClickPrice(parseInt(storeAutoClickPrice));
-        }
-
-        if(storex2ClickPrice){
-            updatex2clickPrice(parseInt(storex2ClickPrice));
-        }
+        loadData(userid);
 
         for(let i = 0; i < autoclickCount; i++){
             autoClickCookie();
@@ -60,6 +32,45 @@ export default function Main() {
     }, [autoclickCount]);
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
 
+    // function to save current player data to backend
+    function saveData(userid){
+        axios.put(`/api/gamesession/${userid}`,
+            {
+                "startTime": startTime,
+                "cookieCount": cookieCount,
+                "AutoClickCount": autoclickCount,
+                "doubleClickCount": x2clickCount,
+                "autoClickPrice": autoclickPrice,
+                "doubleClickPrice": x2clickPrice
+            })
+            .then((res) => {
+                // Save success check
+                if (res.status === 200)
+                    alert("save success!")
+                else
+                    alert("save failed!")
+            })
+    }
+
+    // function to load player data from backend, should run when game is loaded
+    function loadData(userid){
+        axios
+            .get(`/api/gamesession/${userid}`)
+            .then((res) => {
+                if (res.status !== 200) {
+                    alert("load failed!");
+                }
+                else {
+                    updateStartTime(res.data.startTime);
+                    updateCookieCount(parseInt(res.data.cookieCount));
+                    updateAutoClickCount(parseInt(res.data.AutoClickCount));
+                    updatex2clickCount(parseInt(res.data.doubleClickCount));
+                    updateAutoClickPrice(parseInt(res.data.AutoClickPrice));
+                    updatex2clickPrice(parseInt(res.data.doubleClickPrice));
+                }
+            });
+    }
+    
     // function to handle increasing count of cookie when clicked
     function handleCookieCount(e) {
         // update the state and use updated value in local storage
@@ -122,17 +133,6 @@ export default function Main() {
         else {
           alert('Not enough cookies to purchase this upgrade!');
         }
-    }
-
-    // function to save current player data to backend
-    function saveData(){
-        
-    }
-
-    // function to load player data from backend, should run when game is loaded
-    function loadData(){
-        axios
-            .get(`/api/gamesession/${userid}`)
     }
 
     return (
