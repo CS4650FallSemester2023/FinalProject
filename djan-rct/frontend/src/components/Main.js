@@ -6,7 +6,6 @@ import autoclick from "../images/auto-click.png"
 import x2click from "../images/x2-click.png"
 import axios from 'axios'
 
-
 export default function Main() {
     // useState hook that uses a state variable to preserve values
     const [cookieCount, updateCookieCount] = useState(0);
@@ -17,11 +16,10 @@ export default function Main() {
     const [autoclickPrice, updateAutoClickPrice] = useState(20);
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
-    const dataTransferInterval = useRef(null);
-
     
     // useEffect hook to retrieve the counts from local storage after component mounts/page load
     useEffect(() =>{
+        const userid = localStorage.getItem("userid");
         const storeCookieCount = localStorage.getItem('cookieCount');
         const storeAutoClickCount = localStorage.getItem('autoclickCount');
         const storex2ClickCount = localStorage.getItem('x2clickCount');
@@ -29,6 +27,9 @@ export default function Main() {
         const storex2ClickPrice = localStorage.getItem('x2clickPrice');
 
         // check if stored value for state variable in local storage and update state with data
+        if(userid){
+            loadData();
+        }
         if(storeCookieCount){
             updateCookieCount(parseInt(storeCookieCount));
         }
@@ -123,11 +124,15 @@ export default function Main() {
         }
     }
 
-    // function to automatically send current player data to backend
-    function sendData(){
-        dataTransferInterval.current = setInterval(() => {
-            console.log("test interval");
-        }, 1500)
+    // function to save current player data to backend
+    function saveData(){
+        
+    }
+
+    // function to load player data from backend, should run when game is loaded
+    function loadData(){
+        axios
+            .get(`/api/gamesession/${userid}`)
     }
 
     return (
