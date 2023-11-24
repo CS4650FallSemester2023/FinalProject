@@ -17,6 +17,9 @@ export default function Main() {
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
 
+    let userid = localStorage.getItem("userid");
+    if (!userid) userid = "cs4650";
+    console.log(userid)
     const [highscoreTable, HSTable] = useState([]);
     function updateHSTable(scoreObject) {
         HSTable(
@@ -27,24 +30,32 @@ export default function Main() {
         )
     }
     
+    // useCallback to update highscore and save data to server
+    useCallback(() => {
+        loadHighscores();
+        saveData();
+    }, [loadHighscores, saveData])
+
+    // useCallback to load data from server
+    
     // useEffect hook to retrieve the counts from local storage after component mounts/page load
     useEffect(() =>{
-        const userid = localStorage.getItem("userid");
-        loadData(userid);
+        
+        loadData();
 
         for(let i = 0; i < autoclickCount; i++){
             autoClickCookie();
         }
 
         return () => {
-            clearInterval(autoclickInterval.current)
+            clearInterval(autoclickInterval.current);
         };
     }, [autoclickCount]);
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
 
     // function to save current player data to backend
-    function saveData(userid){
-        axios.put(`/api/gamesession/${userid}`,
+    function saveData(){
+        axios.put(`/api/gamesession/${userid}/`,
             {
                 "startTime": startTime,
                 "cookieCount": cookieCount,
@@ -63,12 +74,19 @@ export default function Main() {
     }
 
     // function to load player data from backend, should run when game is loaded
-    function loadData(userid){
+    function loadData(){
         axios
-            .get(`/api/gamesession/${userid}`)
+            .get(`/api/gamesession/${userid}/`)
             .then((res) => {
                 if (res.status !== 200) {
-                    alert("load failed!");
+                    // player data doesn't exist! make a new player
+                    if (res.status == 404) {
+                        saveData();
+                    }
+                    // something has gone royally wrong
+                    else {
+                        alert("load failed!");
+                    }
                 }
                 else {
                     updateStartTime(res.data.startTime);
@@ -84,41 +102,33 @@ export default function Main() {
     // function to get high scores from backend, also runs on first load, might be able to update over time?
     function loadHighscores() {
         axios
-            .get(`api/highscore`)
-            .then((res) => {
-                if (res.status !== 200) {
-                    alert("highscores failed to load!")
-                }
-                else {
-                    let scores = res.data
-                    for (let index = 0; index < scores.length; index++) {
-                        updateHSTable(
-                            {
-                                user: scores[index].user,
-                                cscore: scores[index].cookieCount
-                            });
+            .get(`api/highscore/`)
+            .then(
+                (res) => {
+                    if (res.status !== 200) {
+                        alert("highscores failed to load!");
                         
                     }
+                    else {
+                        let scores = res.data
+                        console.log(scores);
+                        for (let index = 0; index < scores.length; index++) {
+                            updateHSTable(
+                                {
+                                    user: scores[index].user,
+                                    cscore: scores[index].cookieCount
+                                }
+                            );
+                        }
+                    }
                 }
-            })
+            )
     }
     
     // function to handle increasing count of cookie when clicked
     function handleCookieCount(e) {
-        // update the state and use updated value in local storage
-        const hasx2clickCount = localStorage.getItem('x2clickCount') !== null;
-        let newCookieCount;
-        if(hasx2clickCount) {
-            const multiplier = x2clickCount;
-            newCookieCount = cookieCount + (2 ** multiplier)
-        } 
-        else {
-            newCookieCount = cookieCount + 1;
-        }
         // update state and trigger a re-render
-        updateCookieCount(newCookieCount);
-        //update the value in local storage
-        localStorage.setItem('cookieCount', newCookieCount);
+        updateCookieCount(cookieCount + (2 ** x2clickCount));
 
         // Create a new particle and add it to the particles state
         const newParticle = {x: e.clientX, y: e.clientY};
@@ -128,11 +138,7 @@ export default function Main() {
     // function to automatically click the click every 1 second
     function autoClickCookie() {
         autoclickInterval.current = setInterval(() => {
-            updateCookieCount((prevCount) => {
-            const newCount = prevCount + 1;
-            localStorage.setItem('cookieCount', newCount);
-            return newCount;
-          });
+            updateCookieCount(cookieCount + 1);
         }, 1000);
     }
       
@@ -143,24 +149,20 @@ export default function Main() {
           // deduct the upgrade cost from the cookie count
           const newCookieCount = cookieCount - upgradeCost; 
           updateCookieCount(newCookieCount);
-          localStorage.setItem('cookieCount', newCookieCount);
 
           // update 'autoclick' and 'x2clickPrice' price to upgrade and num. of times bought
           if(upgradeName === 'autoclick'){
             updateAutoClickCount((prevCount) => prevCount + 1);
-            localStorage.setItem('autoclickCount', autoclickCount + 1);	
             // autoClickCookie();	
 
-            updateAutoClickPrice((prevPrice) => Math.round(prevPrice * 1.2));
-            localStorage.setItem('autoclickPrice', Math.round(autoclickPrice * 1.2));	
+            updateAutoClickPrice((prevPrice) => Math.round(prevPrice * 1.2));	
           }
           else{
             updatex2clickCount((prevCount) => prevCount + 1);
-            localStorage.setItem('x2clickCount', x2clickCount + 1);
 
             updatex2clickPrice((prevPrice) => Math.round(prevPrice * 2.2));
-            localStorage.setItem('x2clickPrice', Math.round(x2clickPrice  * 2.2));	
           }
+          saveData(userid);
         } 
         else {
           alert('Not enough cookies to purchase this upgrade!');
@@ -211,8 +213,8 @@ export default function Main() {
                         </tr>
                         {highscoreTable.map(hs => (
                             <tr>
-                                <td>hs.user</td>
-                                <td>hs.cscore</td>
+                                <td>{hs.user}</td>
+                                <td>{hs.cscore}</td>
                             </tr>
                         ))}
                     </table>
