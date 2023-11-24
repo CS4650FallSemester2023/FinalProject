@@ -16,6 +16,16 @@ export default function Main() {
     const [autoclickPrice, updateAutoClickPrice] = useState(20);
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
+
+    const [highscoreTable, HSTable] = useState([]);
+    function updateHSTable(scoreObject) {
+        HSTable(
+            [
+                ...highscoreTable,
+                {user: scoreObject.userid, cscore: scoreObject.cookieNumber}
+            ]
+        )
+    }
     
     // useEffect hook to retrieve the counts from local storage after component mounts/page load
     useEffect(() =>{
@@ -69,6 +79,28 @@ export default function Main() {
                     updatex2clickPrice(parseInt(res.data.doubleClickPrice));
                 }
             });
+    }
+
+    // function to get high scores from backend, also runs on first load, might be able to update over time?
+    function loadHighscores() {
+        axios
+            .get(`api/highscore`)
+            .then((res) => {
+                if (res.status !== 200) {
+                    alert("highscores failed to load!")
+                }
+                else {
+                    let scores = res.data
+                    for (let index = 0; index < scores.length; index++) {
+                        updateHSTable(
+                            {
+                                user: scores[index].user,
+                                cscore: scores[index].cookieCount
+                            });
+                        
+                    }
+                }
+            })
     }
     
     // function to handle increasing count of cookie when clicked
@@ -171,7 +203,19 @@ export default function Main() {
                 </section>
                 {/* Player High Score */}
                 <section className='HighScore'>
-                    <h2>High Score</h2>   
+                    <h2>High Score</h2>
+                    <table>
+                        <tr>
+                            <th>User</th>
+                            <th>Score</th>
+                        </tr>
+                        {highscoreTable.map(hs => (
+                            <tr>
+                                <td>hs.user</td>
+                                <td>hs.cscore</td>
+                            </tr>
+                        ))}
+                    </table>
                 </section>
             </section>
         </main>
