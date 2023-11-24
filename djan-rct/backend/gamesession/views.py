@@ -8,3 +8,7 @@ from .models import GameSession
 class GameSessionView(viewsets.ModelViewSet):
     serializer_class = GameSessionSerializer
     queryset = GameSession.objects.all()
+
+class HighScoresView(viewsets.ModelViewSet):
+    serializer_class = GameSessionSerializer
+    queryset = GameSession.objects.order_by("-cookieCount")[:5]
