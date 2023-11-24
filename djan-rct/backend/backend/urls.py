@@ -17,12 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from todo import views as todo_views
 from gamesession import views as gamesession_views
 
 
 router = routers.DefaultRouter()
-router.register(r'todos', todo_views.TodoView, 'todo')
 router.register(r'gamesession', gamesession_views.GameSessionView, 'gamesession')
 router.register(r'highscore', gamesession_views.HighScoresView, 'highscore')
 
