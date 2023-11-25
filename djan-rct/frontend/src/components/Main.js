@@ -18,8 +18,7 @@ export default function Main() {
     const autoclickInterval = useRef(null);
 
     const userid = useRef(null);
-    let highscoreTable = [];
-    loadHighscores();
+    const highscoreTable = useRef([]);
 
     // useEffect hook to load data and highscore from server on first load
     useEffect(() => {
@@ -32,6 +31,7 @@ export default function Main() {
         console.log("userid = ", JSON.stringify(userid.current));
         
         loadData();
+        loadHighscores();
     // eslint-disable-next-line
     }, []);
 
@@ -71,16 +71,7 @@ export default function Main() {
     // function to load player data from backend, should run when game is loaded
     async function loadData() {
         console.log("attempting load");
-        await axios.get(`/api/gamesession/${userid.current}/`)
-            .then((res) => {
-                console.log("server response =", JSON.stringify(res.data));
-                updateStartTime(res.data.startTime);
-                updateCookieCount(parseInt(res.data.cookieCount));
-                updateAutoClickCount(parseInt(res.data.autoClickCount));
-                updatex2clickCount(parseInt(res.data.doubleClickCount));
-                updateAutoClickPrice(parseInt(res.data.autoClickPrice));
-                updatex2clickPrice(parseInt(res.data.doubleClickPrice));
-            })
+        const playerData = await axios.get(`/api/gamesession/${userid.current}/`)
             .catch((err) => {
                 console.log("load failed,", err)
                 if (err.response) {
@@ -89,29 +80,36 @@ export default function Main() {
                     else
                         alert("load failed!");
                 }
+                return;
             });
+        console.log("server response =", JSON.stringify(playerData.data));
+        updateStartTime(playerData.data.startTime);
+        updateCookieCount(parseInt(playerData.data.cookieCount));
+        updateAutoClickCount(parseInt(playerData.data.autoClickCount));
+        updatex2clickCount(parseInt(playerData.data.doubleClickCount));
+        updateAutoClickPrice(parseInt(playerData.data.autoClickPrice));
+        updatex2clickPrice(parseInt(playerData.data.doubleClickPrice));
     }
 
     // function to get high scores from backend, also runs on first load
     async function loadHighscores() {
         console.log("resetting table");
-        highscoreTable = [];
+        highscoreTable.current = [];
         console.log("getting new table from backend");
-        await axios.get(`/api/highscore/`)
-            .then((res) => {
-                console.log("table loaded, populating highscore array");
-                let scores = res.data;
-                console.log("scores =", JSON.stringify(scores));
-                for (let index = 0; index < scores.length; index++) {
-                    console.log("pushing", JSON.stringify(scores[index]) ,"into table");
-                    highscoreTable.push({ user: scores[index].user, cscore: scores[index].cookieCount });
-                }
-                console.log("new table =", JSON.stringify(highscoreTable));
-            })
+        const hstableData = await axios.get(`/api/highscore/`)
             .catch((err) => {
                 console.log("highscores didnt load, err =", err);
                 alert("highscores failed to load!");
+                return;
             });
+        console.log("table loaded, populating highscore array");
+        let scores = hstableData.data;
+        console.log("scores =", JSON.stringify(scores));
+        for (let index = 0; index < scores.length; index++) {
+            console.log("pushing", JSON.stringify(scores[index]) ,"into table");
+            highscoreTable.current.push({ user: scores[index].user, cscore: scores[index].cookieCount });
+        }
+        console.log("new table =", JSON.stringify(highscoreTable));
     }
 
     // function to handle increasing count of cookie when clicked
@@ -196,7 +194,7 @@ export default function Main() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {highscoreTable.map((hs, key) => {
+                                {highscoreTable.current.map((hs, key) => {
                                     return (
                                         <tr key={key}>
                                             <td>{hs.user}</td>
