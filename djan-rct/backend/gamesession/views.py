@@ -9,6 +9,6 @@ class GameSessionView(viewsets.ModelViewSet):
     serializer_class = GameSessionSerializer
     queryset = GameSession.objects.all()
 
-class HighScoresView(viewsets.ModelViewSet):
+class HighScoresView(viewsets.ReadOnlyModelViewSet):
     serializer_class = GameSessionSerializer
     queryset = GameSession.objects.order_by("-cookieCount")[:5]

@@ -6,7 +6,6 @@ import autoclick from "../images/auto-click.png";
 import x2click from "../images/x2-click.png";
 import axios from 'axios';
 
-
 export default function Main() {
     // useState hook that uses a state variable to preserve values
     const [cookieCount, updateCookieCount] = useState(0);
@@ -19,24 +18,20 @@ export default function Main() {
     const autoclickInterval = useRef(null);
 
     const userid = useRef(null);
-    const highscoreTable = useRef([]);
-    function updateHSTable(scoreObject) {
-        highscoreTable.current.push({ user: scoreObject.userid, cscore: scoreObject.cookieNumber });
-    }
-    function resetHSTable() {
-        highscoreTable.current = [];
-    }
+    let highscoreTable = [];
+    loadHighscores();
 
     // useEffect hook to load data and highscore from server on first load
     useEffect(() => {
         userid.current = localStorage.getItem("userid");
         if (!userid.current) {
-            userid.current = "testuser";
-            localStorage.setItem("userid", "testuser");
+            let defaultusr = "cs4650_player"
+            userid.current = defaultusr;
+            localStorage.setItem("userid", defaultusr);
         }
         console.log("userid =");
         console.log(userid.current);
-        loadHighscores();
+        
         loadData();
     }, []);
 
@@ -52,6 +47,7 @@ export default function Main() {
     function saveData(exists = true) {
         console.log("attempting save");
         let saveDataStuff = {
+            "user": userid.current,
             "startTime": startTime,
             "cookieCount": cookieCount,
             "autoClickCount": autoclickCount,
@@ -62,7 +58,7 @@ export default function Main() {
         console.log("savedata content =");
         console.log(saveDataStuff);
         if (exists) {
-            axios.put(`http://localhost:8000/api/gamesession-detail/${userid.current}/`, saveDataStuff)
+            axios.put(`http://localhost:8000/api/gamesession/${userid.current}/`, saveDataStuff)
                 .then((res) => {
                     alert("save success!");
                 })
@@ -71,7 +67,7 @@ export default function Main() {
                 });
         }
         else {
-            axios.post(`http://localhost:8000/api/gamesession-list/${userid.current}/`, saveDataStuff)
+            axios.post(`http://localhost:8000/api/gamesession/`, saveDataStuff)
                 .then((res) => {
                     alert("save success!");
                 })
@@ -109,7 +105,7 @@ export default function Main() {
     // function to get high scores from backend, also runs on first load, might be able to update over time?
     function loadHighscores() {
         console.log("resetting table");
-        resetHSTable();
+        highscoreTable = [];
         console.log("getting new table from backend");
         axios.get(`http://localhost:8000/api/highscore/`)
             .then((res) => {
@@ -118,7 +114,9 @@ export default function Main() {
                 console.log("scores =");
                 console.log(scores);
                 for (let index = 0; index < scores.length; index++) {
-                    updateHSTable({ user: scores[index].user, cscore: scores[index].cookieCount });
+                    console.log("pushing this into table");
+                    console.log(scores[index]);
+                    highscoreTable.push({ user: scores[index].user, cscore: scores[index].cookieCount });
                 }
                 console.log("new table =");
                 console.log(highscoreTable);
@@ -212,7 +210,7 @@ export default function Main() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {highscoreTable.current.map((hs, key) => {
+                                {highscoreTable.map((hs, key) => {
                                     return (
                                         <tr key={key}>
                                             <td>{hs.user}</td>
