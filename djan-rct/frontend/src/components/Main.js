@@ -18,9 +18,7 @@ export default function Main() {
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
 
-    let userid = localStorage.getItem("userid");
-    if (!userid) userid = "cs4650";
-    console.log(userid);
+    let userid = null;
     const [highscoreTable, HSTable] = useState([]);
     function updateHSTable(scoreObject) {
         HSTable([...highscoreTable, { user: scoreObject.userid, cscore: scoreObject.cookieNumber }]);
@@ -31,8 +29,11 @@ export default function Main() {
 
     // useEffect hook to load data and highscore from server on first load
     useEffect(() => {
-        loadData();
+        userid = localStorage.getItem("userid");
+        if (!userid) userid = "testuser";
+        console.log(userid);
         loadHighscores();
+        loadData();
     }, []);
 
     // useEffect hook to update autoclickers when autoClickCount updates
@@ -49,41 +50,55 @@ export default function Main() {
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
     
     // function to save current player data to backend
-    function saveData() {
-        axios.put(`/api/gamesession/${userid}/`,
-            {
-                "startTime": startTime,
-                "cookieCount": cookieCount,
-                "AutoClickCount": autoclickCount,
-                "doubleClickCount": x2clickCount,
-                "autoClickPrice": autoclickPrice,
-                "doubleClickPrice": x2clickPrice
-            })
-            .then((res) => {
-                alert("save success!");
-            })
-            .catch(() => {
-                alert("save failed!");
-            });
+    function saveData(exists = true) {
+        console.log("attempting save");
+        let saveDataStuff = {
+            "startTime": startTime,
+            "cookieCount": cookieCount,
+            "autoClickCount": autoclickCount,
+            "doubleClickCount": x2clickCount,
+            "autoClickPrice": autoclickPrice,
+            "doubleClickPrice": x2clickPrice
+        };
+        console.log(saveDataStuff);
+        if (exists) {
+            axios.put(`http://localhost:8000/api/gamesession-detail/${userid}/`, saveDataStuff)
+                .then((res) => {
+                    alert("save success!");
+                })
+                .catch(() => {
+                    alert("save failed!");
+                });
+        }
+        else {
+            axios.post(`http://localhost:8000/api/gamesession-list/${userid}/`, saveDataStuff)
+                .then((res) => {
+                    alert("save success!");
+                })
+                .catch(() => {
+                    alert("save failed!");
+                });
+        }
     }
 
     // function to load player data from backend, should run when game is loaded
     function loadData() {
-        axios
-            .get(`/api/gamesession/${userid}/`)
+        console.log("attempting load");
+        axios.get(`http://localhost:8000/api/gamesession/${userid}/`)
             .then((res) => {
                 console.log(res.status);
                 updateStartTime(res.data.startTime);
                 updateCookieCount(parseInt(res.data.cookieCount));
-                updateAutoClickCount(parseInt(res.data.AutoClickCount));
+                updateAutoClickCount(parseInt(res.data.autoClickCount));
                 updatex2clickCount(parseInt(res.data.doubleClickCount));
-                updateAutoClickPrice(parseInt(res.data.AutoClickPrice));
+                updateAutoClickPrice(parseInt(res.data.autoClickPrice));
                 updatex2clickPrice(parseInt(res.data.doubleClickPrice));
             })
             .catch((err) => {
+                console.log("load failed, error: " + err)
                 if (err.response) {
-                    if (err.status === 404)
-                        saveData();
+                    if (err.response.status == 404)
+                        saveData(false);
                     else
                         alert("load failed!");
                 }
@@ -92,17 +107,21 @@ export default function Main() {
 
     // function to get high scores from backend, also runs on first load, might be able to update over time?
     function loadHighscores() {
+        console.log("resetting table");
         resetHSTable();
-        axios
-            .get(`api/highscore/`)
+        console.log("getting new table from backend");
+        axios.get(`http://localhost:8000/api/highscore/`)
             .then((res) => {
+                console.log("table loaded, populating highscore array");
                 let scores = res.data;
                 console.log(scores);
                 for (let index = 0; index < scores.length; index++) {
                     updateHSTable({ user: scores[index].user, cscore: scores[index].cookieCount });
                 }
+                console.log(highscoreTable);
             })
             .catch((err) => {
+                console.log("highscores didnt load, err: " + err);
                 alert("highscores failed to load!");
             });
     }
@@ -186,18 +205,22 @@ export default function Main() {
                     <section className='HighScore'>
                         <h2>High Score</h2>
                         <table>
-                            <thead><tr>
-                                <th>User</th>
-                                <th>Score</th>
-                            </tr></thead>
-                            <tbody>{highscoreTable.map((hs, key) => {
-                                return (
-                                    <tr key={key}>
-                                        <td>{hs.user}</td>
-                                        <td>{hs.cscore}</td>
-                                    </tr>
-                                );
-                            })}</tbody>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {highscoreTable.map((hs, key) => {
+                                    return (
+                                        <tr key={key}>
+                                            <td>{hs.user}</td>
+                                            <td>{hs.cscore}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
                         </table>
                     <button type='button' onClick={loadHighscores}>Update Highscore Table</button>
                     <button type='button' onClick={saveData}>Save Gane</button>
