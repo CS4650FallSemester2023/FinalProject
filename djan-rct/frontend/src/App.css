@@ -1,34 +1,131 @@
-.App {
+
+h1{
+  text-align: center;
+  color: bisque;
+  font-weight: bold;
+  text-shadow: 0 0 5px black;
+}
+
+h2{
+  color: white;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+body {
+  background-image: url(./images/cookieclicker-bg.png);
+  background-attachment: fixed;
+  background-position-y: 20%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+/* ========= Cookie Game ========= */
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.cookieGame{
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+}
+
+.cookiePlay{
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  flex-direction: column;
+  margin-left: 300px;
+}
+
+
+.cookiePlay p{
+  background-color: rgba(0, 0, 0, 0.4);
   color: white;
+  font-size: 3rem;
+  text-shadow: 0 0 10px black;
+  padding: 5px 100px;
 }
 
-.App-link {
-  color: #61dafb;
+.cookieBtn{
+  cursor: pointer;
+  width: 350px;
+  animation: cookie-spin 100s linear infinite;
 }
 
-@keyframes App-logo-spin {
+.cookieBtn:active{
+  width: 320px;
+}
+
+.cookie-particle {
+  width: 30px;
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  pointer-events: none;
+  animation: cookie-fade 2s linear forwards;
+}
+
+/* ========= Store ========= */
+
+.Store{
+  border: 8px solid black;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.shopItems{
+  display: flex;
+  background-color: silver;
+  border: 8px solid #fff;
+  border-bottom: 8px solid #737373;
+  padding: 5px 40px;
+  cursor: pointer;
+  width: 350px;
+}
+
+.shopItems:active {
+  box-shadow: 0 0 20px #000 inset;
+}
+
+.shopItems:hover{
+  background-color: white;
+}
+
+.shopItems:active{
+  background-color: white;
+}
+
+.shopItems img{
+  width: 100px;
+}
+
+.shopDesc{
+  margin-left: 15px;
+}
+
+.shopItems .name{
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0;
+  flex: 1.5;
+
+}
+
+.shopItems .price{
+  margin-top: 0;
+  flex: 1.5;
+
+}
+
+.shopItems .upgradeCount{
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  font-size: 2.2rem;
+  opacity: 0.2;
+  
+}
+
+
+
+/* ========= KEYFRAMES ========= */
+
+@keyframes cookie-spin {
   from {
     transform: rotate(0deg);
   }
@@ -36,3 +133,17 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes cookie-fade {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
+      top: 0;
+  }
+}
+
+
+
+
