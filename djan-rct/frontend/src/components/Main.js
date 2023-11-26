@@ -4,7 +4,7 @@ import Shop from './Shop'
 import cookie from "../images/cookie.png"
 import autoclick from "../images/auto-click.png"
 import x2click from "../images/x2-click.png"
-
+// Data needed: cookieCount, autoclickCount, x2clickCount, autoclickPrice, x2clickPrice
 
 export default function Main() {
     // useState hook that uses a state variable to preserve values
@@ -152,7 +152,6 @@ export default function Main() {
                         img = {x2click}
                         upgradeName = "x2 click"
                         upgradePrice = {`${x2clickPrice} cookies`}
-
                         onPurchase={() => handleUpgradePurchase('x2click', x2clickPrice)}
                         upgradeCount = {x2clickCount}
                     />
@@ -160,6 +159,11 @@ export default function Main() {
                 {/* Player High Score */}
                 <section className='HighScore'>
                     <h2>High Score</h2>   
+                    <ol>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ol>
                 </section>
             </section>
         </main>

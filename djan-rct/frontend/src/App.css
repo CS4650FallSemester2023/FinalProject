@@ -18,6 +18,13 @@ body {
   background-position-y: 20%;
 }
 
+.logoutBtn{
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+}
+
 /* ========= Cookie Game ========= */
 
 .cookieGame{
@@ -63,7 +70,7 @@ body {
 
 /* ========= Store ========= */
 
-.Store{
+.Store, .HighScore{
   border: 8px solid black;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -103,7 +110,6 @@ body {
   font-weight: bold;
   margin-bottom: 0;
   flex: 1.5;
-
 }
 
 .shopItems .price{
@@ -118,7 +124,30 @@ body {
   align-items: center;
   font-size: 2.2rem;
   opacity: 0.2;
+}
+
+
+/* ========= High Score ========= */
+
+
+ol li{
+  color: white;
+  font-size: 1.5rem;
+}
+
+ol li:nth-child(1){
+  color: yellow;
   
+}
+
+ol li:nth-child(2){
+  margin: 20px 0;
+  color: #9abadb;
+  
+}
+
+ol li:nth-child(3){
+  color: #CD7F32;
 }
 
 
