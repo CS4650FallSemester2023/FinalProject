@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Particle from './Particle';
-import Shop from './Shop';
+import axios from 'axios';
 import cookie from "../images/cookie.png";
 import autoclick from "../images/auto-click.png";
 import x2click from "../images/x2-click.png";
-import axios from 'axios';
+import Particle from './Particle';
+import Shop from './Shop';
+
 
 export default function Main() {
     // useState hook that uses a state variable to preserve values
@@ -28,7 +29,6 @@ export default function Main() {
             userid.current = defaultusr;
             localStorage.setItem("userid", defaultusr);
         }
-        console.log("userid = ", JSON.stringify(userid.current));
         
         loadData();
         loadHighscores();
@@ -59,8 +59,8 @@ export default function Main() {
         console.log("savedata content = ", JSON.stringify(saveDataStuff));
         if (exists) {
             await axios.put(`/api/gamesession/${userid.current}/`, saveDataStuff)
-                .then((res) => alert("save success!"))
                 .catch(() => alert("save failed!"));
+            alert("save success!");
         }
         else {
             await axios.post(`/api/gamesession/`, saveDataStuff)
@@ -115,7 +115,7 @@ export default function Main() {
     // function to handle increasing count of cookie when clicked
     function handleCookieCount(e) {
         // update state and trigger a re-render
-        updateCookieCount(cookieCount + (2 ** x2clickCount));
+        updateCookieCount((prevcount) => {return prevcount + (2 ** x2clickCount)});
 
         // Create a new particle and add it to the particles state
         const newParticle = { x: e.clientX, y: e.clientY };
@@ -125,7 +125,7 @@ export default function Main() {
     // function to automatically click the click every 1 second
     function autoClickCookie() {
         autoclickInterval.current = setInterval(() => {
-            updateCookieCount(cookieCount + 1);
+            updateCookieCount((prevcount) => {return prevcount + 1});
         }, 1000);
     }
 
@@ -134,8 +134,7 @@ export default function Main() {
         // check if the user has enough cookies to purchase the upgrade
         if (cookieCount >= upgradeCost) {
             // deduct the upgrade cost from the cookie count
-            const newCookieCount = cookieCount - upgradeCost;
-            updateCookieCount(newCookieCount);
+            updateCookieCount((prevcount) => {return prevcount - upgradeCost});
 
             // update 'autoclick' and 'x2clickPrice' price to upgrade and num. of times bought
             if (upgradeName === 'autoclick') {
@@ -161,7 +160,8 @@ export default function Main() {
                         src={cookie}
                         className='cookieBtn'
                         alt="cookie img"
-                        onClick={handleCookieCount}>
+                        onClick={handleCookieCount}
+                        loading="lazy">
                     </img>
                 </section>
                 {/* Player Side Bar */}
