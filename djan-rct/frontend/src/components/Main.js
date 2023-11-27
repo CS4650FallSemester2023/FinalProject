@@ -205,8 +205,8 @@ export default function Main() {
                             </tbody>
                         </table>
                     <div className='btnGroup'>
-                        <button  className = 'highScoreBtns'type='button' onClick={loadHighscores}>Update Highscore Table</button>
-                        <button  className = 'highScoreBtns' type='button' onClick={saveData}>Save Game</button>
+                        <button  className = 'highScoreBtns'type='button' onClick={loadHighscores}>Update Highscores</button>
+                        <button  className = 'highScoreBtns' type='button' onClick={saveData}>Save Player Data</button>
                     </div>                        
                     </section>
                 </section>
