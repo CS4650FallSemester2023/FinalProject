@@ -184,28 +184,30 @@ export default function Main() {
                             upgradeCount={x2clickCount} />
                     </section>
                     {/* Player High Score */}
-                    <section className='HighScore'>
+                    <section className='highScore'>
                         <h2>High Score</h2>
-                        <table>
+                        <table className='userScores'>
                             <thead>
                                 <tr>
-                                    <th>User</th>
-                                    <th>Score</th>
+                                    <th className='user'>User</th>
+                                    <th className='score'>Score</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {highscoreTable.current.map((hs, key) => {
                                     return (
                                         <tr key={key}>
-                                            <td>{hs.user}</td>
-                                            <td>{hs.cscore}</td>
+                                            <td className='userData'>{hs.user}</td>
+                                            <td className='scoreData'>{hs.cscore}</td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
-                    <button type='button' onClick={loadHighscores}>Update Highscore Table</button>
-                    <button type='button' onClick={saveData}>Save Game</button>
+                    <div className='btnGroup'>
+                        <button  className = 'highScoreBtns'type='button' onClick={loadHighscores}>Update Highscore Table</button>
+                        <button  className = 'highScoreBtns' type='button' onClick={saveData}>Save Game</button>
+                    </div>                        
                     </section>
                 </section>
             </main>

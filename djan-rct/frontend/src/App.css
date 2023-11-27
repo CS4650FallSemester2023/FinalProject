@@ -19,11 +19,28 @@ body {
 }
 
 .logoutBtn{
-  position: absolute;
   top: 0;
   left: 0;
   padding: 10px;
+  background-color: silver;
+  border: 3px solid #fff;
+  border-bottom: 3px solid #737373;
+  cursor: pointer;
+  font-weight: bold;
 }
+
+.logoutBtn:active {
+  box-shadow: 0 0 10px #000 inset;
+}
+
+.logoutBtn:hover{
+  background-color: white;
+}
+
+.logoutBtn:active{
+  background-color: white;
+}
+
 
 /* ========= Cookie Game ========= */
 
@@ -70,7 +87,7 @@ body {
 
 /* ========= Store ========= */
 
-.Store, .HighScore{
+.Store, .highScore{
   border: 8px solid black;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -128,28 +145,86 @@ body {
 
 
 /* ========= High Score ========= */
+table{
+  border-spacing: 0px;
+}
 
-
-ol li{
+.highScore{
+  margin-top: 50px;
   color: white;
-  font-size: 1.5rem;
 }
 
-ol li:nth-child(1){
-  color: yellow;
-  
+.highScore th{
+  color: white;
+  background: #5ca1d6;
+  padding: 10px 20px;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: rgba(0,0,0,0.3);
 }
 
-ol li:nth-child(2){
-  margin: 20px 0;
-  color: #9abadb;
-  
+th:first-child {
+  border-top-left-radius: 5px;
+  width: 182px;
 }
 
-ol li:nth-child(3){
-  color: #CD7F32;
+th:last-child {
+  border-top-right-radius: 5px;
+  border-right: none;
+  width: 182px;
+  text-align: center;
 }
 
+th, td {
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: rgba(0,0,0,0.3);
+}
+
+td{
+  padding: 7px 20px;
+  background: #FFE4C4;
+  color: black;
+}
+
+.userScores{
+  margin: auto;
+}
+ 
+.userData, .scoreData{
+  text-align: center;
+}
+
+.btnGroup{
+  text-align: center; 
+  padding: 50px 0 0 0;
+}
+
+.highScoreBtns{
+  width: 223px;
+  border: 3px solid #fff;
+  cursor: pointer;
+  background-color: silver;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-bottom: 4px solid #737373;
+  font-weight: 700;
+  color: black;
+  line-height: 26px;
+}
+
+.highScoreBtns:active {
+  box-shadow: 0 0 10px #000 inset;
+}
+
+.highScoreBtns:hover{
+  background-color: white;
+}
+
+.highScoreBtns:active{
+  background-color: white;
+}
 
 
 /* ========= KEYFRAMES ========= */
