@@ -1,188 +1,173 @@
-import React, { Component } from "react";
-import Modal from "./components/Modal";
-import axios from "axios";
-import React, { useState } from "react";
-import logo from './logo.svg';
 import './App.css';
-import { Login } from "./Login";
-import { Register } from "./Register";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+  baseURL: "http://127.0.0.1:8000"
+});
 
 function App() {
-  const [currentForm, setCurrentForm] = useState('login');
 
-  const toggleForm = (formName) => {
-    setCurrentForm(formName);
+  const [currentUser, setCurrentUser] = useState();
+  const [registrationToggle, setRegistrationToggle] = useState(false);
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    client.get("/api/user")
+    .then(function(res) {
+      setCurrentUser(true);
+    })
+    .catch(function(error) {
+      setCurrentUser(false);
+    });
+  }, []);
+
+  function update_form_btn() {
+    if (registrationToggle) {
+      document.getElementById("form_btn").innerHTML = "Register";
+      setRegistrationToggle(false);
+    } else {
+      document.getElementById("form_btn").innerHTML = "Log in";
+      setRegistrationToggle(true);
+    }
   }
 
-  return (
-    <div className="App">
+  function submitRegistration(e) {
+    e.preventDefault();
+    client.post(
+      "/api/register",
       {
-        currentForm == "login" ? <Login onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm}/>
+        email: email,
+        username: username,
+        password: password
       }
-    </div>
-  );
-}
-
-
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewCompleted: false,
-      todoList: [],
-      modal: false,
-      activeItem: {
-        title: "",
-        description: "",
-        completed: false,
-      },
-    };
+    ).then(function(res) {
+      client.post(
+        "/api/login",
+        {
+          email: email,
+          password: password
+        }
+      ).then(function(res) {
+        setCurrentUser(true);
+      });
+    });
   }
 
-
-
-  componentDidMount() {
-    this.refreshList();
+  function submitLogin(e) {
+    e.preventDefault();
+    client.post(
+      "/api/login",
+      {
+        email: email,
+        password: password
+      }
+    ).then(function(res) {
+      setCurrentUser(true);
+    });
   }
 
-  refreshList = () => {
-    axios
-      .get("/api/todos/")
-      .then((res) => this.setState({ todoList: res.data }))
-      .catch((err) => console.log(err));
-  };
+  function submitLogout(e) {
+    e.preventDefault();
+    client.post(
+      "/api/logout",
+      {withCredentials: true}
+    ).then(function(res) {
+      setCurrentUser(false);
+    });
+  }
 
-  toggle = () => {
-    this.setState({ modal: !this.state.modal });
-  };
-
-  handleSubmit = (item) => {
-    this.toggle();
-
-    if (item.id) {
-      axios
-        .put(`/api/todos/${item.id}/`, item)
-        .then((res) => this.refreshList());
-      return;
-    }
-    axios
-      .post("/api/todos/", item)
-      .then((res) => this.refreshList());
-  };
-
-  handleDelete = (item) => {
-    axios
-      .delete(`/api/todos/${item.id}/`)
-      .then((res) => this.refreshList());
-  };
-
-  createItem = () => {
-    const item = { title: "", description: "", completed: false };
-
-    this.setState({ activeItem: item, modal: !this.state.modal });
-  };
-
-  editItem = (item) => {
-    this.setState({ activeItem: item, modal: !this.state.modal });
-  };
-
-  displayCompleted = (status) => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-
-    return this.setState({ viewCompleted: false });
-  };
-
-  renderTabList = () => {
+  if (currentUser) {
     return (
-      <div className="nav nav-tabs">
-        <span
-          onClick={() => this.displayCompleted(true)}
-          className={this.state.viewCompleted ? "nav-link active" : "nav-link"}
-        >
-          Complete
-        </span>
-        <span
-          onClick={() => this.displayCompleted(false)}
-          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
-        >
-          Incomplete
-        </span>
-      </div>
-    );
-  };
-
-  renderItems = () => {
-    const { viewCompleted } = this.state;
-    const newItems = this.state.todoList.filter(
-      (item) => item.completed === viewCompleted
-    );
-
-    return newItems.map((item) => (
-      <li
-        key={item.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-        <span
-          className={`todo-title mr-2 ${
-            this.state.viewCompleted ? "completed-todo" : ""
-          }`}
-          title={item.description}
-        >
-          {item.title}
-        </span>
-        <span>
-          <button
-            className="btn btn-secondary mr-2"
-            onClick={() => this.editItem(item)}
-          >
-            Edit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => this.handleDelete(item)}
-          >
-            Delete
-          </button>
-        </span>
-      </li>
-    ));
-  };
-
-  render() {
-    return (
-      <main className="container">
-        <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
-        <div className="row">
-          <div className="col-md-6 col-sm-10 mx-auto p-0">
-            <div className="card p-3">
-              <div className="mb-4">
-                <button
-                  className="btn btn-primary"
-                  onClick={this.createItem}
-                >
-                  Add task
-                </button>
-              </div>
-              {this.renderTabList()}
-              <ul className="list-group list-group-flush border-top-0">
-                {this.renderItems()}
-              </ul>
-            </div>
+      <div>
+        <Navbar bg="dark" variant="dark">
+          <Container>
+            <Navbar.Brand>Authentication App</Navbar.Brand>
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                <form onSubmit={e => submitLogout(e)}>
+                  <Button type="submit" variant="light">Log out</Button>
+                </form>
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+          <div className="center">
+            <h2>You're logged in!</h2>
           </div>
         </div>
-        {this.state.modal ? (
-          <Modal
-            activeItem={this.state.activeItem}
-            toggle={this.toggle}
-            onSave={this.handleSubmit}
-          />
-        ) : null}
-      </main>
     );
   }
+  return (
+    <div>
+    <Navbar bg="dark" variant="dark">
+      <Container>
+        <Navbar.Brand>Authentication App</Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            <Button id="form_btn" onClick={update_form_btn} variant="light">Register</Button>
+          </Navbar.Text>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+    {
+      registrationToggle ? (
+        <div className="center">
+          <Form onSubmit={e => submitRegistration(e)}>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control type="email" placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicUsername">
+              <Form.Label>Username</Form.Label>
+              <Form.Control type="text" placeholder="Enter username" value={username} onChange={e => setUsername(e.target.value)} />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </div>        
+      ) : (
+        <div className="center">
+          <Form onSubmit={e => submitLogin(e)}>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control type="email" placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
+              <Form.Text className="text-muted">
+                We'll never share your email with anyone else.
+              </Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </div>
+      )
+    }
+    </div>
+  );
 }
 
 export default App;
