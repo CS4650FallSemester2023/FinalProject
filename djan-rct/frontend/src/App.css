@@ -57,7 +57,6 @@ body {
   margin-left: 300px;
 }
 
-
 .cookiePlay p{
   background-color: rgba(0, 0, 0, 0.4);
   color: white;
@@ -68,12 +67,12 @@ body {
 
 .cookieBtn{
   cursor: pointer;
-  width: 350px;
+  width: 380px;
   animation: cookie-spin 100s linear infinite;
 }
 
 .cookieBtn:active{
-  width: 320px;
+  width: 365px;
 }
 
 .cookie-particle {
@@ -83,6 +82,10 @@ body {
   left: -30px;
   pointer-events: none;
   animation: cookie-fade 2s linear forwards;
+}
+
+.playerSideBar{
+  padding-left: 100px;
 }
 
 /* ========= Store ========= */
@@ -160,7 +163,7 @@ table{
   padding: 10px 20px;
   border-style: solid;
   border-width: 0 1px 1px 0;
-  border-color: rgba(0,0,0,0.3);
+  border-color: rgba(0,0,0,0.2);
 }
 
 th:first-child {
@@ -178,7 +181,7 @@ th:last-child {
 th, td {
   border-style: solid;
   border-width: 0 1px 1px 0;
-  border-color: rgba(0,0,0,0.3);
+  border-color: rgba(0,0,0,0.2);
 }
 
 td{
@@ -248,6 +251,21 @@ td{
   }
 }
 
+/* ========= Media Queries ========= */
+@media (max-width: 1350px){
+  .cookiePlay p{
+    font-size: 2.5rem;
+    padding: 5px 80px;
+
+  }
+}
+
+
+@media (max-width: 1250px){
+  .cookiePlay p{
+    padding: 5px 75px;
+  }
+}
 
 
 
