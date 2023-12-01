@@ -168,7 +168,7 @@ export default function Main() {
                 <section className='playerSideBar'>
                     {/* Player Store */}
                     <section className='Store'>
-                        <h2>Store</h2>
+                        <h2 className = "sideBarTitle">Store</h2>
                         <Shop
                             img={autoclick}
                             upgradeName="Autoclick"
@@ -185,7 +185,7 @@ export default function Main() {
                     </section>
                     {/* Player High Score */}
                     <section className='highScore'>
-                        <h2>High Score</h2>
+                        <h2 className = "sideBarTitle">High Score</h2>
                         <table className='userScores'>
                             <thead>
                                 <tr>
