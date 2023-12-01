@@ -118,7 +118,8 @@ function App() {
     <Navbar bg="dark" variant="dark">
       <Container>
       <img width="50" height="50" src="https://img.icons8.com/plasticine/100/cookie.png" alt="cookie"/>
-        <Navbar.Brand className='cookieTitle'>Cookie Clicker</Navbar.Brand>        <Navbar.Toggle />
+        <Navbar.Brand className='cookieTitle'>Cookie Clicker</Navbar.Brand>        
+        <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text>
             <Button id="form_btn" onClick={update_form_btn} variant="light">Register</Button>
