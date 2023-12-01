@@ -3,8 +3,6 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Main from './components/Main';
-import cookie from "./images/cookie.png";
-
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
