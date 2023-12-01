@@ -1,9 +1,9 @@
 
-h1{
+.cookieTitle{
   text-align: center;
-  color: bisque;
   font-weight: bold;
-  text-shadow: 0 0 5px black;
+  font-size: 1.5rem;
+  margin-left: 5px;
 }
 
 h2{

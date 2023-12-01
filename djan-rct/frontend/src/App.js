@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Main from './components/Main';
+import cookie from "./images/cookie.png";
 
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
@@ -93,9 +94,11 @@ function App() {
   if (currentUser) {
     return (
       <div>
+       
         <Navbar bg="dark" variant="dark">
           <Container>
-            <Navbar.Brand>Cookie Clicker App</Navbar.Brand>
+          <img width="50" height="50" src="https://img.icons8.com/plasticine/100/cookie.png" alt="cookie"/>
+            <Navbar.Brand className='cookieTitle'>Cookie Clicker</Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>
@@ -114,8 +117,8 @@ function App() {
     <div>
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand>Cookie Clicker App</Navbar.Brand>
-        <Navbar.Toggle />
+      <img width="50" height="50" src="https://img.icons8.com/plasticine/100/cookie.png" alt="cookie"/>
+        <Navbar.Brand className='cookieTitle'>Cookie Clicker</Navbar.Brand>        <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text>
             <Button id="form_btn" onClick={update_form_btn} variant="light">Register</Button>
