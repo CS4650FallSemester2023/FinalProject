@@ -30,7 +30,11 @@ class UserLogin(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.check_user(data)
             login(request, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = {
+                'email': user.email,
+                'username': user.username,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
 
 class UserLogout(APIView):
     def post(self, request):

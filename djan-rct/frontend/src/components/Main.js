@@ -7,7 +7,7 @@ import Particle from './Particle';
 import Shop from './Shop';
 
 
-export default function Main() {
+export default function Main({username}) {
     // useState hook that uses a state variable to preserve values
     const [cookieCount, updateCookieCount] = useState(0);
     const [particles, setParticles] = useState([]);
@@ -18,20 +18,14 @@ export default function Main() {
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
 
-    const userid = useRef(null);
     const highscoreTable = useRef([]);
 
     // useEffect hook to load data and highscore from server on first load
     useEffect(() => {
-        userid.current = localStorage.getItem("userid");
-        if (!userid.current) {
-            let defaultusr = "cs4650_player"
-            userid.current = defaultusr;
-            localStorage.setItem("userid", defaultusr);
+        if(username){
+            loadData();
+            loadHighscores();
         }
-        
-        loadData();
-        loadHighscores();
     // eslint-disable-next-line
     }, []);
 
@@ -48,7 +42,7 @@ export default function Main() {
     async function saveData(exists = true) {
         console.log("attempting save");
         let saveDataStuff = {
-            "user": userid.current,
+            "user": username,
             "startTime": startTime,
             "cookieCount": cookieCount,
             "autoClickCount": autoclickCount,
@@ -58,7 +52,7 @@ export default function Main() {
         };
         console.log("savedata content = ", JSON.stringify(saveDataStuff));
         if (exists) {
-            await axios.put(`/api/gamesession/${userid.current}/`, saveDataStuff)
+            await axios.put(`/api/gamesession/${username}/`, saveDataStuff)
                 .catch(() => alert("save failed!"));
             alert("save success!");
         }
@@ -71,7 +65,7 @@ export default function Main() {
     // function to load player data from backend, should run when game is loaded
     async function loadData() {
         console.log("attempting load");
-        const playerData = await axios.get(`/api/gamesession/${userid.current}/`)
+        const playerData = await axios.get(`/api/gamesession/${username}/`)
             .catch((err) => {
                 console.log("load failed,", err)
                 if (err.response) {

@@ -21,7 +21,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState();
   const [registrationToggle, setRegistrationToggle] = useState(false);
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState('');
 
   useEffect(() => {
@@ -61,6 +61,7 @@ function App() {
           password: password
         }
       ).then(function(res) {
+        setUsername(res.data.username); 
         setCurrentUser(true);
       });
     });
@@ -74,7 +75,8 @@ function App() {
         email: email,
         password: password
       }
-    ).then(function(res) {
+    ).then(function (res) {
+      setUsername(res.data.username);  
       setCurrentUser(true);
     });
   }
@@ -107,7 +109,7 @@ function App() {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-        <Main />
+        <Main username={username} />
         </div>
     );
   }
