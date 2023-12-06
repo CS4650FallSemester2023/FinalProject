@@ -13,6 +13,9 @@ def custom_validation(data):
     if not password or len(password) < 8:
         raise ValidationError('Choose another password, min 8 characters')
     ##
+    if not username or UserModel.objects.filter(username=username).exists():
+        raise ValidationError('Choose another username')
+    ##
     if not username:
         raise ValidationError('Choose another username')
     return data
