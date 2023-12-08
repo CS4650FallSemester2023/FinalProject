@@ -25,8 +25,16 @@ SECRET_KEY = 'django-insecure-4+fjj1)(to9fvqs!!=_3unlod8jf=apt3d(5is3)6^^!)bn^nx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://0.0.0.0:3000',
+    'http://129.153.90.80:3000',
+    'http://129.153.90.80:8000',
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -40,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'gamesession',
+    'saveuser.apps.SaveuserConfig',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +91,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+##User Model
+AUTH_USER_MODEL = 'saveuser.AppUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASS': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
 }
 
 
@@ -127,7 +148,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://129.153.90.80:3000',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_WHITELIST = [

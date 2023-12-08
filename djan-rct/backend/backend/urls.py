@@ -20,6 +20,7 @@ from rest_framework import routers
 from gamesession import views as gamesession_views
 
 
+
 router = routers.DefaultRouter()
 router.register(r'gamesession', gamesession_views.GameSessionView, 'gamesession')
 router.register(r'highscore', gamesession_views.HighScoresView, 'highscore')
@@ -27,4 +28,5 @@ router.register(r'highscore', gamesession_views.HighScoresView, 'highscore')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('saveuser/', include('saveuser.urls')),
 ]

@@ -7,7 +7,7 @@ import Particle from './Particle';
 import Shop from './Shop';
 
 
-export default function Main() {
+export default function Main({username}) {
     // useState hook that uses a state variable to preserve values
     const [cookieCount, updateCookieCount] = useState(0);
     const [particles, setParticles] = useState([]);
@@ -18,20 +18,14 @@ export default function Main() {
     const [x2clickPrice, updatex2clickPrice] = useState(40);
     const autoclickInterval = useRef(null);
 
-    const userid = useRef(null);
     const highscoreTable = useRef([]);
 
     // useEffect hook to load data and highscore from server on first load
     useEffect(() => {
-        userid.current = localStorage.getItem("userid");
-        if (!userid.current) {
-            let defaultusr = "cs4650_player"
-            userid.current = defaultusr;
-            localStorage.setItem("userid", defaultusr);
+        if(username){
+            loadData();
+            loadHighscores();
         }
-        
-        loadData();
-        loadHighscores();
     // eslint-disable-next-line
     }, []);
 
@@ -44,11 +38,26 @@ export default function Main() {
     }, [autoclickCount]);
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
     
+    const client = axios.create({
+        baseURL: "http://129.153.90.80:8000",
+        withCredentials: true,
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+
+      
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+  
     // function to save current player data to backend
     async function saveData(exists = true) {
         console.log("attempting save");
         let saveDataStuff = {
-            "user": userid.current,
+            "user": username,
             "startTime": startTime,
             "cookieCount": cookieCount,
             "autoClickCount": autoclickCount,
@@ -58,37 +67,38 @@ export default function Main() {
         };
         console.log("savedata content = ", JSON.stringify(saveDataStuff));
         if (exists) {
-            await axios.put(`/api/gamesession/${userid.current}/`, saveDataStuff)
-                .catch(() => alert("save failed!"));
+            await client.put(`/api/gamesession/${username}/`, saveDataStuff)
+            .catch(() => alert("save failed!"));
             alert("save success!");
         }
         else {
-            await axios.post(`/api/gamesession/`, saveDataStuff)
-                .catch(() => alert("save failed!"));
+            await client.post(`/api/gamesession/`, saveDataStuff)
+            .catch(() => alert("save failed!"));
         }
     }
-
     // function to load player data from backend, should run when game is loaded
     async function loadData() {
         console.log("attempting load");
-        const playerData = await axios.get(`/api/gamesession/${userid.current}/`)
-            .catch((err) => {
-                console.log("load failed,", err)
-                if (err.response) {
-                    if (err.response.status === 404)
-                        saveData(false);
-                    else
-                        alert("load failed!");
-                }
-                return;
-            });
-        console.log("server response =", JSON.stringify(playerData.data));
-        updateStartTime(playerData.data.startTime);
-        updateCookieCount(parseInt(playerData.data.cookieCount));
-        updateAutoClickCount(parseInt(playerData.data.autoClickCount));
-        updatex2clickCount(parseInt(playerData.data.doubleClickCount));
-        updateAutoClickPrice(parseInt(playerData.data.autoClickPrice));
-        updatex2clickPrice(parseInt(playerData.data.doubleClickPrice));
+        try{
+            const playerData = await axios.get(`/api/gamesession/${username}/`)
+            console.log("server response =", JSON.stringify(playerData.data));
+            updateStartTime(playerData.data.startTime);
+            updateCookieCount(parseInt(playerData.data.cookieCount));
+            updateAutoClickCount(parseInt(playerData.data.autoClickCount));
+            updatex2clickCount(parseInt(playerData.data.doubleClickCount));
+            updateAutoClickPrice(parseInt(playerData.data.autoClickPrice));
+            updatex2clickPrice(parseInt(playerData.data.doubleClickPrice));
+        }
+        catch(err){
+            console.log("load failed,", err)
+            if (err.response) {
+                if (err.response.status === 404)
+                    saveData(false);
+                else
+                    alert("load failed!");
+            }
+            return;
+        };
     }
 
     // function to get high scores from backend, also runs on first load
@@ -168,7 +178,7 @@ export default function Main() {
                 <section className='playerSideBar'>
                     {/* Player Store */}
                     <section className='Store'>
-                        <h2>Store</h2>
+                        <h2 className = "sideBarTitle">Store</h2>
                         <Shop
                             img={autoclick}
                             upgradeName="Autoclick"
@@ -184,28 +194,30 @@ export default function Main() {
                             upgradeCount={x2clickCount} />
                     </section>
                     {/* Player High Score */}
-                    <section className='HighScore'>
-                        <h2>High Score</h2>
-                        <table>
+                    <section className='highScore'>
+                        <h2 className = "sideBarTitle">High Score</h2>
+                        <table className='userScores'>
                             <thead>
                                 <tr>
-                                    <th>User</th>
-                                    <th>Score</th>
+                                    <th className='user'>User</th>
+                                    <th className='score'>Score</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {highscoreTable.current.map((hs, key) => {
                                     return (
                                         <tr key={key}>
-                                            <td>{hs.user}</td>
-                                            <td>{hs.cscore}</td>
+                                            <td className='userData'>{hs.user}</td>
+                                            <td className='scoreData'>{hs.cscore}</td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
-                    <button type='button' onClick={loadHighscores}>Update Highscore Table</button>
-                    <button type='button' onClick={saveData}>Save Game</button>
+                    <div className='btnGroup'>
+                        <button  className = 'highScoreBtns'type='button' onClick={loadHighscores}>Update Highscores</button>
+                        <button  className = 'highScoreBtns' type='button' onClick={saveData}>Save Player Data</button>
+                    </div>                        
                     </section>
                 </section>
             </main>

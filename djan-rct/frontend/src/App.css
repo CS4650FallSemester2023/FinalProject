@@ -1,9 +1,10 @@
 
-h1{
+.cookieTitle{
   text-align: center;
-  color: bisque;
   font-weight: bold;
-  text-shadow: 0 0 5px black;
+  font-size: 1.5rem;
+  margin-left: 5px;
+  cursor: default;
 }
 
 h2{
@@ -18,6 +19,30 @@ body {
   background-position-y: 20%;
 }
 
+.logoutBtn{
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background-color: silver;
+  border: 3px solid #fff;
+  border-bottom: 3px solid #737373;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logoutBtn:active {
+  box-shadow: 0 0 10px #000 inset;
+}
+
+.logoutBtn:hover{
+  background-color: white;
+}
+
+.logoutBtn:active{
+  background-color: white;
+}
+
+
 /* ========= Cookie Game ========= */
 
 .cookieGame{
@@ -30,9 +55,8 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-left: 300px;
+  flex: 2;
 }
-
 
 .cookiePlay p{
   background-color: rgba(0, 0, 0, 0.4);
@@ -44,12 +68,12 @@ body {
 
 .cookieBtn{
   cursor: pointer;
-  width: 350px;
+  width: 380px;
   animation: cookie-spin 100s linear infinite;
 }
 
 .cookieBtn:active{
-  width: 320px;
+  width: 365px;
 }
 
 .cookie-particle {
@@ -61,9 +85,13 @@ body {
   animation: cookie-fade 2s linear forwards;
 }
 
+.playerSideBar{
+  padding-left: 100px;
+}
+
 /* ========= Store ========= */
 
-.Store{
+.Store, .highScore{
   border: 8px solid black;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -75,7 +103,8 @@ body {
   border-bottom: 8px solid #737373;
   padding: 5px 40px;
   cursor: pointer;
-  width: 350px;
+  width: 100%;
+
 }
 
 .shopItems:active {
@@ -96,6 +125,7 @@ body {
 
 .shopDesc{
   margin-left: 15px;
+  margin-top: 20px
 }
 
 .shopItems .name{
@@ -103,7 +133,6 @@ body {
   font-weight: bold;
   margin-bottom: 0;
   flex: 1.5;
-
 }
 
 .shopItems .price{
@@ -118,9 +147,99 @@ body {
   align-items: center;
   font-size: 2.2rem;
   opacity: 0.2;
-  
 }
 
+
+/* ========= High Score ========= */
+table{
+  border-spacing: 0px;
+}
+
+.highScore{
+  margin-top: 50px;
+  color: white;
+}
+
+.highScore th{
+  color: white;
+  background: #5ca1d6;
+  padding: 10px 20px;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: rgba(0,0,0,0.2);
+}
+
+th:first-child {
+  border-top-left-radius: 5px;
+  width: 182px;
+}
+
+th:last-child {
+  border-top-right-radius: 5px;
+  border-right: none;
+  width: 182px;
+  text-align: center;
+}
+
+th, td {
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: rgba(0,0,0,0.2);
+}
+
+td{
+  padding: 7px 20px;
+  background: #FFE4C4;
+  color: black;
+}
+
+.userScores{
+  margin: auto;
+  width: 100%;
+}
+
+.user{
+  text-align: center;
+}
+ 
+.userData, .scoreData{
+  text-align: center;
+}
+
+.btnGroup{
+  text-align: center; 
+  padding: 50px 0 0 0;
+}
+
+.sideBarTitle{
+  margin: 15px 0;
+}
+
+.highScoreBtns{
+  width: 223px;
+  border: 3px solid #fff;
+  cursor: pointer;
+  background-color: silver;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-bottom: 4px solid #737373;
+  font-weight: 700;
+  color: black;
+  line-height: 26px;
+}
+
+.highScoreBtns:active {
+  box-shadow: 0 0 10px #000 inset;
+}
+
+.highScoreBtns:hover{
+  background-color: white;
+}
+
+.highScoreBtns:active{
+  background-color: white;
+}
 
 
 /* ========= KEYFRAMES ========= */
@@ -144,6 +263,49 @@ body {
   }
 }
 
+/* ========= Media Queries ========= */
+@media (max-width: 1350px){
+  .cookiePlay p{
+    font-size: 2.5rem;
+    padding: 5px 80px;
+
+  }
+}
+
+
+@media (max-width: 1250px){
+  .cookiePlay p{
+    padding: 5px 75px;
+  }
+}
 
 
 
+/* boostrap form style */
+
+.form-inline {
+  width: 100%;
+}
+
+.form-group {
+  width: 90%;
+}
+
+.input-group {
+  width: 90% !important;
+}
+
+.form-control {
+  width: 80% !important;
+}
+
+span.input-group-addon {
+  width: 50px !important;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5%;
+}
