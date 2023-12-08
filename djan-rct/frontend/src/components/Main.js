@@ -38,6 +38,21 @@ export default function Main({username}) {
     }, [autoclickCount]);
     //re-run everytime autoclickCount changes. Does not accumulate the effect from previous renders and starts new
     
+    const client = axios.create({
+        baseURL: "http://129.153.90.80:8000",
+        withCredentials: true,
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+
+      
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+  
     // function to save current player data to backend
     async function saveData(exists = true) {
         console.log("attempting save");
@@ -52,37 +67,38 @@ export default function Main({username}) {
         };
         console.log("savedata content = ", JSON.stringify(saveDataStuff));
         if (exists) {
-            await axios.put(`/api/gamesession/${username}/`, saveDataStuff)
-                .catch(() => alert("save failed!"));
+            await client.put(`/api/gamesession/${username}/`, saveDataStuff)
+            .catch(() => alert("save failed!"));
             alert("save success!");
         }
         else {
-            await axios.post(`/api/gamesession/`, saveDataStuff)
-                .catch(() => alert("save failed!"));
+            await client.post(`/api/gamesession/`, saveDataStuff)
+            .catch(() => alert("save failed!"));
         }
     }
-
     // function to load player data from backend, should run when game is loaded
     async function loadData() {
         console.log("attempting load");
-        const playerData = await axios.get(`/api/gamesession/${username}/`)
-            .catch((err) => {
-                console.log("load failed,", err)
-                if (err.response) {
-                    if (err.response.status === 404)
-                        saveData(false);
-                    else
-                        alert("load failed!");
-                }
-                return;
-            });
-        console.log("server response =", JSON.stringify(playerData.data));
-        updateStartTime(playerData.data.startTime);
-        updateCookieCount(parseInt(playerData.data.cookieCount));
-        updateAutoClickCount(parseInt(playerData.data.autoClickCount));
-        updatex2clickCount(parseInt(playerData.data.doubleClickCount));
-        updateAutoClickPrice(parseInt(playerData.data.autoClickPrice));
-        updatex2clickPrice(parseInt(playerData.data.doubleClickPrice));
+        try{
+            const playerData = await axios.get(`/api/gamesession/${username}/`)
+            console.log("server response =", JSON.stringify(playerData.data));
+            updateStartTime(playerData.data.startTime);
+            updateCookieCount(parseInt(playerData.data.cookieCount));
+            updateAutoClickCount(parseInt(playerData.data.autoClickCount));
+            updatex2clickCount(parseInt(playerData.data.doubleClickCount));
+            updateAutoClickPrice(parseInt(playerData.data.autoClickPrice));
+            updatex2clickPrice(parseInt(playerData.data.doubleClickPrice));
+        }
+        catch(err){
+            console.log("load failed,", err)
+            if (err.response) {
+                if (err.response.status === 404)
+                    saveData(false);
+                else
+                    alert("load failed!");
+            }
+            return;
+        };
     }
 
     // function to get high scores from backend, also runs on first load
